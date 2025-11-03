@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:bottom="3dp"
+        android:left="3dp"
+        android:right="3dp"
+        android:top="3dp">
+        <shape android:shape="rectangle">
+            <!-- Bo góc cho nền bên trong -->
+            <corners android:radius="28dp" />
+            <!-- Màu nền tối của bạn -->
+            <solid android:color="@color/radiwhitelayer2" />  <!-- Cập nhật màu nền ở đây -->
+        </shape>
+    </item>
+
+</selector>

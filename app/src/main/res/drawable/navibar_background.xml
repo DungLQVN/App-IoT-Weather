@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- LỚP 1: LỚP NỀN VIỀN CẦU VỒNG (NẰM DƯỚI CÙNG) -->
+    <item>
+        <shape android:shape="rectangle">
+            <!-- Bo góc cho viền -->
+            <corners android:radius="30dp" /> <!-- Tăng độ bo góc một chút -->
+            <!-- Dải màu cầu vồng cho viền -->
+            <gradient
+                android:angle="45"
+                android:endColor="#FFFCB9"
+                android:centerColor="#71E7FD"
+                android:startColor="#F983F9"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- LỚP 2: LỚP NỀN MÀU TỐI (NẰM TRÊN, NHỎ HƠN ĐỂ LỘ VIỀN) -->
+    <item
+        android:bottom="3dp"
+        android:left="3dp"
+        android:right="3dp"
+        android:top="3dp">
+        <shape android:shape="rectangle">
+            <!-- Bo góc cho nền bên trong -->
+            <corners android:radius="28dp" />
+            <!-- Màu nền tối của bạn -->
+            <solid android:color="@color/darkbackground" />  <!-- Cập nhật màu nền ở đây -->
+        </shape>
+    </item>
+
+</layer-list>

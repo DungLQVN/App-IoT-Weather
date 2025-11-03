@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#232228"
+    android:id="@+id/main"
+    tools:context=".Stats">
+
+    <!-- THANH TIÊU ĐỀ -->
+    <RelativeLayout
+        android:id="@+id/header_container"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/radiblacklayer1"
+        android:paddingHorizontal="16dp"
+        android:layout_alignParentTop="true">
+
+        <!-- Nút quay lại (icon bên trái) -->
+        <ImageView
+            android:id="@+id/icon_back"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_back"
+            app:tint="@android:color/white"  />
+
+        <!-- Tiêu đề ở giữa -->
+        <TextView
+            android:id="@+id/header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ngôn ngữ"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_below="@id/header_container"
+        android:gravity="center_horizontal">
+
+        <!-- Ô 1: Tiếng Việt -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/navibar_background"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_language_vn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Tiếng Việt"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/icon_flag_vn"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_flagvietnam"
+                android:contentDescription="Vietnam Flag"
+                android:scaleType="centerCrop" />
+        </LinearLayout>
+
+        <!-- Ô 2: English -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/navibar_background"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_language_en"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="English"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/icon_flag_en"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_flagus"
+                android:contentDescription="English Flag"
+                android:scaleType="centerCrop" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>
