@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#232228"
+    android:background="@color/background"
     android:id="@+id/main"
     tools:context=".Dashboard">
 
@@ -14,7 +14,7 @@
         android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:background="@color/radiblacklayer1"
+        android:background="@color/layer1"
         android:paddingHorizontal="16dp"
         android:layout_alignParentTop="true">
 
@@ -22,8 +22,8 @@
             android:id="@+id/header_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dashboard"
-            android:textColor="@android:color/white"
+            android:text="@string/dashboard"
+            android:textColor="@color/textColor"
             android:textSize="22sp"
             android:textStyle="bold"
             android:layout_centerVertical="true"
@@ -80,25 +80,28 @@
                     app:layout_constraintHorizontal_weight="1">
 
                     <ImageView
+                        android:id="@+id/img_weather"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@drawable/ic_cloud"
                         android:layout_marginBottom="8dp" />
 
                     <TextView
+                        android:id="@+id/tv_temp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="27°C"
-                        android:textColor="@android:color/white"
+                        android:text="--°C"
+                        android:textColor="@color/textColor"
                         android:textSize="20sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tv_weather_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ngoài trời"
-                        android:textColor="#B0B0B0"
-                        android:textSize="14sp"/>
+                        android:text="@string/outside"
+                        android:textColor="@color/textColor"
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <!-- Ô 2 -->
@@ -126,16 +129,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="82%"
-                        android:textColor="@android:color/white"
+                        android:text="--%"
+                        android:id="@+id/tv_humidity"
+                        android:textColor="@color/textColor"
                         android:textSize="20sp"
                         android:textStyle="bold"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Độ ẩm"
-                        android:textColor="#B0B0B0"
+                        android:text="@string/humidity"
+                        android:textColor="@color/textColor"
                         android:textSize="14sp"/>
                 </LinearLayout>
 
@@ -165,16 +169,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15 km/h"
-                        android:textColor="@android:color/white"
+                        android:text="-- km/h"
+                        android:id="@+id/tv_windspeed"
+                        android:textColor="@color/textColor"
                         android:textSize="20sp"
                         android:textStyle="bold"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Gió"
-                        android:textColor="#B0B0B0"
+                        android:text="@string/wind"
+                        android:textColor="@color/textColor"
                         android:textSize="14sp"/>
                 </LinearLayout>
 
@@ -217,15 +222,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="350 lux"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="20sp"
                         android:textStyle="bold"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ánh sáng"
-                        android:textColor="#B0B0B0"
+                        android:text="@string/light"
+                        android:textColor="@color/textColor"
                         android:textSize="14sp"/>
                 </LinearLayout>
 
@@ -255,15 +260,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="92%"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="20sp"
                         android:textStyle="bold"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Pin"
-                        android:textColor="#B0B0B0"
+                        android:text="@string/batery"
+                        android:textColor="@color/textColor"
                         android:textSize="14sp"/>
                 </LinearLayout>
 
@@ -294,15 +299,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="55 dB"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="20sp"
                         android:textStyle="bold"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Độ ồn"
-                        android:textColor="#B0B0B0"
+                        android:text="@string/noise"
+                        android:textColor="@color/textColor"
                         android:textSize="14sp"/>
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -358,7 +363,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Thiết bị 1"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="8dp"/>
@@ -386,7 +391,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Thiết bị 2"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="8dp"/>
@@ -425,7 +430,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Thiết bị 3"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="8dp"/>
@@ -453,7 +458,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Thiết bị 4"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="8dp"/>

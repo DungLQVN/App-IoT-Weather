@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class Notification : AppCompatActivity() {
+class Notification : ThemeLightDark() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -38,4 +38,5 @@ class Notification : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
 }

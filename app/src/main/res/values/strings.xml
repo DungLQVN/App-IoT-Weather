@@ -1,3 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">IoT</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="setting">Cài đặt</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="stat">Thông số</string>
+    <string name="notify">Thông báo</string>
+    <string name="outside">Ngoài trời</string>
+    <string name="humidity">Độ ẩm</string>
+    <string name="wind">Gió</string>
+    <string name="light">Ánh sáng</string>
+    <string name="batery">Pin</string>
+    <string name="noise">Ồn</string>
+    <string name="device">Thiết bị</string>
+    <string name="theme">Chế độ sáng</string>
 </resources>
+

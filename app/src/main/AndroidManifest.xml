@@ -15,12 +15,6 @@
             android:name=".Language"
             android:exported="false" />
         <activity
-            android:name=".DashboardFragment"
-            android:exported="false" />
-        <activity
-            android:name=".NotificationFragment"
-            android:exported="false" />
-        <activity
             android:name=".Setting"
             android:exported="false" />
         <activity
@@ -42,5 +36,8 @@
             </intent-filter>
         </activity>
     </application>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

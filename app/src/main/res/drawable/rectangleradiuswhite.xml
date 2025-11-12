@@ -9,7 +9,7 @@
             <!-- Bo góc cho nền bên trong -->
             <corners android:radius="28dp" />
             <!-- Màu nền tối của bạn -->
-            <solid android:color="@color/background" />  <!-- Cập nhật màu nền ở đây -->
+            <solid android:color="@color/radiwhitelayer1" />  <!-- Cập nhật màu nền ở đây -->
         </shape>
     </item>
 

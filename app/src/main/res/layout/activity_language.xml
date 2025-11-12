@@ -5,16 +5,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#232228"
+    android:background="@color/background"
     android:id="@+id/main"
     tools:context=".Stats">
 
     <!-- THANH TIÊU ĐỀ -->
+
     <RelativeLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:background="@color/radiblacklayer1"
+        android:background="@color/layer1"
         android:paddingHorizontal="16dp"
         android:layout_alignParentTop="true">
 
@@ -27,15 +28,15 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="10dp"
             android:src="@drawable/ic_back"
-            app:tint="@android:color/white"  />
+            />
 
         <!-- Tiêu đề ở giữa -->
         <TextView
             android:id="@+id/header_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ngôn ngữ"
-            android:textColor="@android:color/white"
+            android:text="@string/language"
+            android:textColor="@color/textColor"
             android:textSize="22sp"
             android:textStyle="bold"
             android:layout_centerInParent="true" />
@@ -54,6 +55,7 @@
 
         <!-- Ô 1: Tiếng Việt -->
         <LinearLayout
+            android:id="@+id/box_language_vn"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -61,6 +63,7 @@
             android:background="@drawable/navibar_background"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:clickable="true"
             android:padding="16dp">
 
             <TextView
@@ -84,12 +87,14 @@
 
         <!-- Ô 2: English -->
         <LinearLayout
+            android:id="@+id/box_language_eng"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:background="@drawable/navibar_background"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:clickable="true"
             android:padding="16dp">
 
             <TextView

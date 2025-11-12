@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IoT</string>
+    <string name="language">Language</string>
+    <string name="setting">Setting</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="stat">Stat</string>
+    <string name="notify">Notifycation</string>
+    <string name="outside">Outside</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind">Wind</string>
+    <string name="light">Light</string>
+    <string name="batery">Battery</string>
+    <string name="noise">Noise</string>
+    <string name="device">Device</string>
+    <string name="theme">Theme</string>
+</resources>

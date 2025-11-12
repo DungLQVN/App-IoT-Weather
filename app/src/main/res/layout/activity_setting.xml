@@ -5,16 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#232228"
+    android:background="@color/background"
     android:id="@+id/main"
+    android:textColor="@color/textColor"
     tools:context=".Stats">
+
 
     <!-- THANH TIÊU ĐỀ "CÀI ĐẶT" -->
     <RelativeLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:background="@color/radiblacklayer1"
+        android:background="@color/layer1"
         android:padding="16dp"
         android:layout_alignParentTop="true">
 
@@ -22,8 +24,8 @@
             android:id="@+id/header_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cài đặt"
-            android:textColor="@android:color/white"
+            android:text="@string/setting"
+            android:textColor="@color/textColor"
             android:textSize="22sp"
             android:textStyle="bold"
             android:layout_centerInParent="true" />
@@ -43,8 +45,7 @@
             android:id="@+id/mode_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chế độ sáng"
-            android:textColor="@android:color/white"
+            android:text="@string/theme"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -60,6 +61,7 @@
             android:layout_height="70dp"
             android:background="@drawable/rectangleradiusblack"
             android:padding="5dp"
+            android:clipToPadding="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
@@ -67,9 +69,8 @@
             <!-- Thanh trượt -->
             <View
                 android:id="@+id/toggle_thumb"
-                android:layout_width="100dp"
+                android:layout_width="90dp"
                 android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
                 android:background="@drawable/rectangleradiuslayerblack" />
 
             <!-- Icon Mặt trời -->
@@ -79,20 +80,19 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="28dp"
-                android:src="@drawable/ic_sun"
-                app:tint="@android:color/white" />
+                android:src="@drawable/ic_sun" />
 
             <!-- Icon Mặt trăng -->
             <ImageView
                 android:id="@+id/icon_moon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
                 android:layout_marginEnd="28dp"
-                android:src="@drawable/ic_moon"
-                app:tint="@android:color/white" />
+                android:src="@drawable/ic_moon" />
         </RelativeLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- HÀNG NGÔN NGỮ -->
@@ -111,8 +111,8 @@
             android:id="@+id/language_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ngôn ngữ"
-            android:textColor="@android:color/white"
+            android:text="@string/language"
+            android:textColor="@color/textColor"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -125,7 +125,6 @@
             android:layout_height="24dp"
             android:src="@drawable/ic_forward"
             android:contentDescription="Forward"
-            app:tint="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
