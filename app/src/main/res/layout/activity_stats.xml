@@ -5,11 +5,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
     android:id="@+id/main"
+    android:background="@color/background"
     tools:context=".Stats">
 
-    <!-- Thanh navigation ở dưới cùng -->
+    <!-- TIÊU ĐỀ -->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tỉ lệ Gas trong nhà"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/textColor"
+        android:layout_marginTop="24dp"
+        android:layout_centerHorizontal="true"/>
+
+    <!-- BIỂU ĐỒ DONUT -->
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart"
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:layout_below="@id/tv_title"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <!-- TÍNH TRẠNG -->
+    <TextView
+        android:id="@+id/tv_sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cập nhật: --"
+        android:textColor="@color/textColor"
+        android:layout_below="@id/pieChart"
+        android:layout_marginTop="12dp"
+        android:layout_centerHorizontal="true" />
+
+
+
+    <!-- BOTTOM NAVIGATION -->
     <LinearLayout
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
@@ -21,42 +56,34 @@
         android:background="@drawable/navibar_background"
         android:paddingHorizontal="24dp">
 
-        <!-- Nút Home -->
         <ImageView
             android:id="@+id/icon_home"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_home"
-            android:layout_weight="1"
-            android:contentDescription="Home" />
+            android:layout_weight="1"/>
 
-        <!-- Nút Stats -->
         <ImageView
             android:id="@+id/icon_stats"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_stats_active"
-            android:layout_weight="1"
-            android:contentDescription="Stats" />
+            android:layout_weight="1"/>
 
-        <!-- Nút Notifications -->
         <ImageView
             android:id="@+id/icon_notifications"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_notifications"
-            android:layout_weight="1"
-            android:contentDescription="Notifications" />
+            android:layout_weight="1"/>
 
-        <!-- Nút Settings -->
         <ImageView
             android:id="@+id/icon_setting"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_settings"
-            android:layout_weight="1"
-            android:contentDescription="Settings" />
-
+            android:layout_weight="1"/>
 
     </LinearLayout>
+
 </RelativeLayout>

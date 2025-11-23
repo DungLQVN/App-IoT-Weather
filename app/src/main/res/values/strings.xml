@@ -11,7 +11,7 @@
     <string name="wind">Gió</string>
     <string name="light">Ánh sáng</string>
     <string name="batery">Pin</string>
-    <string name="noise">Ồn</string>
+    <string name="gas">Nồng độ gas</string>
     <string name="device">Thiết bị</string>
     <string name="theme">Chế độ sáng</string>
 </resources>

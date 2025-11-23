@@ -312,7 +312,7 @@
                     android:gravity="center"
                     android:layout_marginHorizontal="8dp"
                     app:layout_constraintStart_toEndOf="@id/box_light"
-                    app:layout_constraintEnd_toStartOf="@id/box_noise"
+                    app:layout_constraintEnd_toStartOf="@id/box_gas"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintDimensionRatio="1:1"
@@ -342,7 +342,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/box_noise"
+                    android:id="@+id/box_gas"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:orientation="vertical"
@@ -365,17 +365,18 @@
                     <!--                android:src="@drawable/ic_noise"-->
 
                     <TextView
+                        android:id="@+id/tv_gas_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="55 dB"
+                        android:text="-- %"
                         android:textColor="@color/textColor"
                         android:textSize="20sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/noise"
+                        android:text="@string/gas"
                         android:textColor="@color/textColor"
                         android:textSize="14sp"/>
                 </LinearLayout>

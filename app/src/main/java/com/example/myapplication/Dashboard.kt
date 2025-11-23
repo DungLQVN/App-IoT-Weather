@@ -26,7 +26,7 @@ import androidx.work.*
 import android.app.AlarmManager
 import android.os.Build
 import android.provider.Settings
-
+import org.json.JSONArray
 
 
 class Dashboard : ThemeLightDark() {
@@ -102,6 +102,8 @@ class Dashboard : ThemeLightDark() {
 
         setExactNextHourAlarm()
         startGasMonitoring()
+        loadGasValue()
+
 
         // Lấy location
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -122,6 +124,44 @@ class Dashboard : ThemeLightDark() {
         }
 
     }
+
+    private val gasClient = OkHttpClient()
+
+//    private fun loadGasValue() {
+//        // 🔥 DỮ LIỆU MẪU – KHÔNG DÙNG API
+//        val gas = 55   // ví dụ 55%
+//
+//        runOnUiThread {
+//            val tvGas = findViewById<TextView>(R.id.tv_gas_value)
+//            tvGas.text = "$gas %"
+//        }
+//    }
+
+
+    private fun loadGasValue() {
+        Thread {
+            try {
+                val request = Request.Builder()
+                    .url("https://YOUR_API_HERE")   // API gas thực tế của bạn
+                    .build()
+
+                val response = gasClient.newCall(request).execute()
+                val json = response.body?.string() ?: return@Thread
+
+                val arr = JSONArray(json)
+                val gas = arr.getJSONObject(0).getInt("gas")  // lấy giá trị mới nhất
+
+                runOnUiThread {
+                    val tvGas = findViewById<TextView>(R.id.tv_gas_value)
+                    tvGas.text = "$gas %"
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }.start()
+    }
+
 
     private fun startGasMonitoring() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager

@@ -9,6 +9,7 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/textColor"
         android:text="Tỉ lệ Gas trong nhà"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -25,6 +26,7 @@
         android:id="@+id/tv_sub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/textColor"
         android:text="Cập nhật: --"
         android:layout_below="@id/pieChart"
         android:layout_marginTop="12dp"/>
