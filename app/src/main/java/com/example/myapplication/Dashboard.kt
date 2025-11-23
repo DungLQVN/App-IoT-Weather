@@ -2,6 +2,8 @@ package com.example.myapplication
 
 
 import android.Manifest
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -10,6 +12,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.ui.text.intl.Locale
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -19,6 +22,10 @@ import com.google.android.gms.location.LocationServices
 import okhttp3.*
 import org.json.JSONObject
 import com.bumptech.glide.Glide
+import androidx.work.*
+import android.app.AlarmManager
+import android.os.Build
+import android.provider.Settings
 
 
 
@@ -55,6 +62,16 @@ class Dashboard : ThemeLightDark() {
             insets
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val am = getSystemService(AlarmManager::class.java)
+            if (!am.canScheduleExactAlarms()) {
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                startActivity(intent)
+                return   // ❗ RẤT QUAN TRỌNG: DỪNG HẲN onCreate()
+            }
+        }
+
+
         // ⚠️ PHẢI khởi tạo fusedLocationClient TRƯỚC
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -83,6 +100,11 @@ class Dashboard : ThemeLightDark() {
         tvHumidity = findViewById(R.id.tv_humidity)
         tvWindSpeed = findViewById(R.id.tv_windspeed)
 
+        setExactNextHourAlarm()
+        startGasMonitoring()
+
+        // Lấy location
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         checkLocationPermission()
 
         val boxTemp = findViewById<LinearLayout>(R.id.box_temp)
@@ -100,6 +122,66 @@ class Dashboard : ThemeLightDark() {
         }
 
     }
+
+    private fun startGasMonitoring() {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                startActivity(intent)
+                return   // ❗ DỪNG tại đây, chờ user cho phép
+            }
+        }
+
+        val intent = Intent(this, GasAlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            1,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis(),
+            pendingIntent
+        )
+    }
+
+
+
+
+
+
+    private fun setExactNextHourAlarm() {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(this, WeatherAlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            this, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val calendar = java.util.Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+
+        calendar.set(java.util.Calendar.MINUTE, 0)
+        calendar.set(java.util.Calendar.SECOND, 0)
+        calendar.set(java.util.Calendar.MILLISECOND, 0)
+
+        // Giờ tiếp theo
+        calendar.add(java.util.Calendar.HOUR_OF_DAY, 1)
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            pendingIntent
+        )
+    }
+
+
+
 
     private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(
@@ -150,16 +232,32 @@ class Dashboard : ThemeLightDark() {
 
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
             location?.let {
+
+                // 🔥 LƯU VỊ TRÍ LẠI CHO WORKER DÙNG
+                val prefs = getSharedPreferences("Settings", MODE_PRIVATE)
+                prefs.edit()
+                    .putFloat("LAT", it.latitude.toFloat())
+                    .putFloat("LON", it.longitude.toFloat())
+                    .apply()
+
+                // 🔥 Gọi API hiển thị trên UI
                 getWeather(it.latitude, it.longitude)
+
             } ?: run {
                 tvDesc.text = "Không lấy được vị trí"
             }
         }
     }
 
+
     private fun getWeather(lat: Double, lon: Double) {
-        val url =
-            "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$apiKey&units=metric&lang=vi"
+        // Lấy ngôn ngữ đã lưu từ SharedPreferences
+        val prefs = getSharedPreferences("Settings", MODE_PRIVATE)
+        val languageCode = prefs.getString("My_Lang", "vi") ?: "vi"
+
+        // Tạo URL với tham số lang động
+        val url = "https://api.openweathermap.org/data/2.5/weather" +
+                "?lat=$lat&lon=$lon&appid=$apiKey&units=metric&lang=$languageCode"
 
         val request = Request.Builder().url(url).build()
         client.newCall(request).enqueue(object : Callback {
@@ -175,23 +273,31 @@ class Dashboard : ThemeLightDark() {
                 val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
                 val desc = weather.getString("description")
                 val icon = weather.getString("icon")
-                val city = jsonObj.getString("name") // 🏙️ Lấy tên thành phố
-                val humidity = jsonObj.getJSONObject("main").getInt("humidity") // Độ ẩm
-                val windSpeed = jsonObj.getJSONObject("wind").getDouble("speed") *3.6// Tốc độ gió
+                val city = jsonObj.getString("name")
+                val humidity = jsonObj.getJSONObject("main").getInt("humidity")
+                val windSpeed = jsonObj.getJSONObject("wind").getDouble("speed") * 3.6
+                val windSpeedRounded = (Math.round(windSpeed * 100.0) / 100.0)
 
                 runOnUiThread {
                     tvTemp.text = "${tempC.toInt()}°C"
                     tvDesc.text = city
-
                     tvHumidity.text = "$humidity %"
-                    tvWindSpeed.text = "$windSpeed km/h"
+                    tvWindSpeed.text = "$windSpeedRounded km/h"
 
                     val iconUrl = "https://openweathermap.org/img/wn/${icon}@2x.png"
                     Glide.with(this@Dashboard).load(iconUrl).into(imgWeather)
+
+                    val tvWeatherDetail = findViewById<TextView>(R.id.tv_weather_detail)
+                    val iconWeatherDesc = findViewById<ImageView>(R.id.icon_weather_desc)
+                    tvWeatherDetail.text = desc.replaceFirstChar { it.uppercase() }
+                    val smallIconUrl = "https://openweathermap.org/img/wn/${icon}.png"
+                    Glide.with(this@Dashboard).load(smallIconUrl).into(iconWeatherDesc)
                 }
             }
         })
     }
+
+
 
 //    private fun getWeatherIcon(icon: String): Int {
 //        return when (icon) {

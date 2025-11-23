@@ -33,11 +33,13 @@
             android:id="@+id/icon_adddevice"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_adddevice"
-            android:contentDescription="Add device" />
+            android:layout_marginEnd="15dp"
+            android:layout_centerVertical="true"
+            android:contentDescription="Add device"
+            android:src="@drawable/ic_adddevice" />
     </RelativeLayout>
+
 
     <!-- 🟦 PHẦN CÓ THỂ CUỘN -->
     <ScrollView
@@ -48,10 +50,25 @@
         android:layout_above="@id/bottom_nav"
         android:fillViewport="true">
 
+                    <!-- Tiêu đề "Thiết bị" -->
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/device_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divider_line"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Ngoài trời"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/textColor" />
 
             <!-- BOX CONTAINER 1 -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -185,8 +202,60 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- BOX THỜI TIẾT Ở GIỮA -->
+            <LinearLayout
+                android:id="@+id/box_weather_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/three_boxes_container"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:background="@drawable/navibar_background"
+                android:padding="12dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/icon_weather_desc"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_cloud"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/tv_weather_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đang tải thời tiết..."
+                    android:textColor="@color/textColor"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Đường thẳng ngang chia cách -->
+            <View
+                android:id="@+id/divider_line"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_below="@id/second_boxes_container"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                android:background="#3D3D3D" />  <!-- Màu xám đậm nhẹ -->
 
             <!-- 🆕 BOX CONTAINER 2 (thêm mới) -->
+            <TextView
+                android:id="@+id/device_title1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divider_line"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Trong nhà"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/textColor" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/second_boxes_container"
                 android:layout_width="match_parent"
@@ -314,7 +383,7 @@
 
             <!-- Đường thẳng ngang chia cách -->
             <View
-                android:id="@+id/divider_line"
+                android:id="@+id/divider_line1"
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
                 android:layout_below="@id/second_boxes_container"
@@ -323,153 +392,153 @@
                 android:layout_marginTop="16dp"
                 android:background="#3D3D3D" />  <!-- Màu xám đậm nhẹ -->
 
-            <!-- Tiêu đề "Thiết bị" -->
-            <TextView
-                android:id="@+id/device_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/divider_line"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Thiết bị"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/white" />
+<!--            &lt;!&ndash; Tiêu đề "Thiết bị" &ndash;&gt;-->
+<!--            <TextView-->
+<!--                android:id="@+id/device_title"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/divider_line"-->
+<!--                android:layout_marginStart="16dp"-->
+<!--                android:layout_marginTop="16dp"-->
+<!--                android:text="Thiết bị"-->
+<!--                android:textSize="18sp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textColor="@android:color/white" />-->
 
-            <!-- Hai ô vuông chứa thiết bị -->
-            <LinearLayout
-                android:id="@+id/device_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/device_title"
-                android:layout_margin="16dp"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:weightSum="2">
+<!--            &lt;!&ndash; Hai ô vuông chứa thiết bị &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/device_container"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/device_title"-->
+<!--                android:layout_margin="16dp"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:gravity="center"-->
+<!--                android:weightSum="2">-->
 
-                <!-- Ô Thiết bị 1 -->
-                <LinearLayout
-                    android:id="@+id/device1_box"
-                    android:layout_width="0dp"
-                    android:layout_height="150dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/navibar_background">
+<!--                &lt;!&ndash; Ô Thiết bị 1 &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/device1_box"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="150dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:gravity="center"-->
+<!--                    android:layout_marginEnd="8dp"-->
+<!--                    android:background="@drawable/navibar_background">-->
 
-                    <TextView
-                        android:id="@+id/device1_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Thiết bị 1"
-                        android:textColor="@color/textColor"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp"/>
+<!--                    <TextView-->
+<!--                        android:id="@+id/device1_name"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Thiết bị 1"-->
+<!--                        android:textColor="@color/textColor"-->
+<!--                        android:textSize="16sp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:layout_marginBottom="8dp"/>-->
 
-                    <Switch
-                        android:id="@+id/device1_switch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=""/>
-                </LinearLayout>
+<!--                    <Switch-->
+<!--                        android:id="@+id/device1_switch"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text=""/>-->
+<!--                </LinearLayout>-->
 
-                <!-- Ô Thiết bị 2 -->
-                <LinearLayout
-                    android:id="@+id/device2_box"
-                    android:layout_width="0dp"
-                    android:layout_height="150dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/navibar_background">
+<!--                &lt;!&ndash; Ô Thiết bị 2 &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/device2_box"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="150dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:gravity="center"-->
+<!--                    android:layout_marginStart="8dp"-->
+<!--                    android:background="@drawable/navibar_background">-->
 
-                    <TextView
-                        android:id="@+id/device2_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Thiết bị 2"
-                        android:textColor="@color/textColor"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp"/>
+<!--                    <TextView-->
+<!--                        android:id="@+id/device2_name"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Thiết bị 2"-->
+<!--                        android:textColor="@color/textColor"-->
+<!--                        android:textSize="16sp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:layout_marginBottom="8dp"/>-->
 
-                    <Switch
-                        android:id="@+id/device2_switch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=""/>
-                </LinearLayout>
-            </LinearLayout>
+<!--                    <Switch-->
+<!--                        android:id="@+id/device2_switch"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text=""/>-->
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
 
-            <LinearLayout
-                android:id="@+id/second_device_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/device_title"
-                android:layout_margin="16dp"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:weightSum="2">
+<!--            <LinearLayout-->
+<!--                android:id="@+id/second_device_container"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/device_title"-->
+<!--                android:layout_margin="16dp"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:gravity="center"-->
+<!--                android:weightSum="2">-->
 
-                <!-- Ô Thiết bị 1 -->
-                <LinearLayout
-                    android:id="@+id/device3_box"
-                    android:layout_width="0dp"
-                    android:layout_height="150dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/navibar_background">
+<!--                &lt;!&ndash; Ô Thiết bị 1 &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/device3_box"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="150dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:gravity="center"-->
+<!--                    android:layout_marginEnd="8dp"-->
+<!--                    android:background="@drawable/navibar_background">-->
 
-                    <TextView
-                        android:id="@+id/device3_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Thiết bị 3"
-                        android:textColor="@color/textColor"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp"/>
+<!--                    <TextView-->
+<!--                        android:id="@+id/device3_name"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Thiết bị 3"-->
+<!--                        android:textColor="@color/textColor"-->
+<!--                        android:textSize="16sp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:layout_marginBottom="8dp"/>-->
 
-                    <Switch
-                        android:id="@+id/device3_switch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=""/>
-                </LinearLayout>
+<!--                    <Switch-->
+<!--                        android:id="@+id/device3_switch"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text=""/>-->
+<!--                </LinearLayout>-->
 
-                <!-- Ô Thiết bị 2 -->
-                <LinearLayout
-                    android:id="@+id/device4_box"
-                    android:layout_width="0dp"
-                    android:layout_height="150dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/navibar_background">
+<!--                &lt;!&ndash; Ô Thiết bị 2 &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/device4_box"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="150dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:gravity="center"-->
+<!--                    android:layout_marginStart="8dp"-->
+<!--                    android:background="@drawable/navibar_background">-->
 
-                    <TextView
-                        android:id="@+id/device4_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Thiết bị 4"
-                        android:textColor="@color/textColor"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp"/>
+<!--                    <TextView-->
+<!--                        android:id="@+id/device4_name"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Thiết bị 4"-->
+<!--                        android:textColor="@color/textColor"-->
+<!--                        android:textSize="16sp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:layout_marginBottom="8dp"/>-->
 
-                    <Switch
-                        android:id="@+id/device4_switch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=""/>
-                </LinearLayout>
-            </LinearLayout>
+<!--                    <Switch-->
+<!--                        android:id="@+id/device4_switch"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text=""/>-->
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
 
         </LinearLayout>
     </ScrollView>

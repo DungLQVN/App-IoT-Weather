@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- 🟦 QUYỀN PHẢI ĐƯỢC ĐẶT Ở ĐÂY, TRƯỚC <application> -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission-sdk-23 android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,33 +20,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity
-            android:name=".Language"
-            android:exported="false" />
-        <activity
-            android:name=".Setting"
-            android:exported="false" />
-        <activity
-            android:name=".Notification"
-            android:exported="false" />
-        <activity
-            android:name=".Stats"
-            android:exported="false" />
+
+        <receiver
+            android:name=".WeatherAlarmReceiver"
+            android:exported="true" />
+        <receiver
+            android:name=".GasAlarmReceiver"
+            android:exported="true" />
+
+        <activity android:name=".Language" android:exported="false" />
+        <activity android:name=".Setting" android:exported="false" />
+        <activity android:name=".Notification" android:exported="false" />
+        <activity android:name=".Stats" android:exported="false" />
+
         <activity
             android:name=".Dashboard"
             android:exported="true"
             android:label="@string/app_name">
 
-            <!-- android:theme="@style/Theme.MyApplication" -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
     </application>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
