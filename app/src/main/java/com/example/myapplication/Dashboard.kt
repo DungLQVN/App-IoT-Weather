@@ -106,18 +106,19 @@ class Dashboard : ThemeLightDark() {
     }
 
     // -------------------------------
-    // 🔥 REALTIME GAS UPDATE EVERY 10 SECONDS
+    // 🔥 REALTIME GAS UPDATE EVERY 1 SECONDS
     // -------------------------------
     private fun startGasAutoRefresh() {
         val handler = android.os.Handler(mainLooper)
         val runnable = object : Runnable {
             override fun run() {
                 loadGasValue()
-                handler.postDelayed(this, 10_000)
+                handler.postDelayed(this, 1_000)  // 🔥 gọi API mỗi 1 giây
             }
         }
         handler.post(runnable)
     }
+
 
     private fun loadGasValue() {
         Thread {
