@@ -9,8 +9,8 @@
     <string name="outside">Ngoài trời</string>
     <string name="humidity">Độ ẩm</string>
     <string name="wind">Gió</string>
-    <string name="light">Ánh sáng</string>
-    <string name="batery">Pin</string>
+    <string name="indoor">Nhiệt độ</string>
+    <string name="hum_indoor">Độ ẩm</string>
     <string name="gas">Nồng độ gas</string>
     <string name="device">Thiết bị</string>
     <string name="theme">Chế độ sáng</string>

@@ -288,9 +288,10 @@
                         android:layout_marginBottom="8dp" />
                     <!--                android:src="@drawable/ic_light"-->
                     <TextView
+                        android:id="@+id/tv_temp_indoor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="350 lux"
+                        android:text="--°C"
                         android:textColor="@color/textColor"
                         android:textSize="20sp"
                         android:textStyle="bold"/>
@@ -298,9 +299,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/light"
+                        android:text="@string/indoor"
                         android:textColor="@color/textColor"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -326,9 +327,10 @@
 
 
                     <TextView
+                        android:id="@+id/tv_humidity_indoor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="92%"
+                        android:text="--%"
                         android:textColor="@color/textColor"
                         android:textSize="20sp"
                         android:textStyle="bold"/>
@@ -336,7 +338,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/batery"
+                        android:text="@string/hum_indoor"
                         android:textColor="@color/textColor"
                         android:textSize="14sp"/>
                 </LinearLayout>
@@ -368,7 +370,7 @@
                         android:id="@+id/tv_gas_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="-- %"
+                        android:text="--"
                         android:textColor="@color/textColor"
                         android:textSize="20sp"
                         android:textStyle="bold" />

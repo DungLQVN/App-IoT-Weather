@@ -1,159 +1,150 @@
 package com.example.myapplication
 
-
 import android.Manifest
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.ui.text.intl.Locale
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import okhttp3.*
-import org.json.JSONObject
-import com.bumptech.glide.Glide
-import androidx.work.*
-import android.app.AlarmManager
-import android.os.Build
-import android.provider.Settings
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.json.JSONArray
-
+import org.json.JSONObject
 
 class Dashboard : ThemeLightDark() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private val client = OkHttpClient()
-    private val apiKey = "ca0baf6a818c66173efb56fb03d42588"
+    private val weatherClient = OkHttpClient()
+    private val gasClient = OkHttpClient()
 
-    companion object {
-        private const val LOCATION_PERMISSION_REQUEST = 1001
-    }
+    private val apiKey = "ca0baf6a818c66173efb56fb03d42588"
 
     private lateinit var tvTemp: TextView
     private lateinit var tvDesc: TextView
     private lateinit var imgWeather: ImageView
-
     private lateinit var tvHumidity: TextView
-
     private lateinit var tvWindSpeed: TextView
+    private lateinit var tvGasValue: TextView
+    private lateinit var tvTempIndoor: TextView
+    private lateinit var tvHumidityIndoor: TextView
 
-    private var isCelsius = true
+
     private var currentTempC = 0.0
+    private var isCelsius = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_dashboard)
 
-        // Xử lý edge-to-edge padding
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        // Edge-to-edge
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, ins ->
+            val bars = ins.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            ins
         }
 
+        // ASK FOR EXACT ALARM PERMISSION ON ANDROID 12+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val am = getSystemService(AlarmManager::class.java)
             if (!am.canScheduleExactAlarms()) {
-                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-                startActivity(intent)
-                return   // ❗ RẤT QUAN TRỌNG: DỪNG HẲN onCreate()
+                startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                return
             }
         }
 
-
-        // ⚠️ PHẢI khởi tạo fusedLocationClient TRƯỚC
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        // Lấy icon và set sự kiện click
-        val settingsIcon: ImageView = findViewById(R.id.icon_setting)
-        settingsIcon.setOnClickListener {
-            val intent = Intent(this, Setting::class.java)
-            startActivity(intent)
-        }
-
-        val NotiIcon: ImageView = findViewById(R.id.icon_notifications)
-        NotiIcon.setOnClickListener {
-            val intent = Intent(this, Notification::class.java)
-            startActivity(intent)
-        }
-
-        val StatsIcon: ImageView = findViewById(R.id.icon_stats)
-        StatsIcon.setOnClickListener {
-            val intent = Intent(this, Stats::class.java)
-            startActivity(intent)
-        }
 
         tvTemp = findViewById(R.id.tv_temp)
         tvDesc = findViewById(R.id.tv_weather_desc)
         imgWeather = findViewById(R.id.img_weather)
         tvHumidity = findViewById(R.id.tv_humidity)
         tvWindSpeed = findViewById(R.id.tv_windspeed)
+        tvGasValue = findViewById(R.id.tv_gas_value)
+        tvTempIndoor = findViewById(R.id.tv_temp_indoor)
+        tvHumidityIndoor = findViewById(R.id.tv_humidity_indoor)
 
-        setExactNextHourAlarm()
-        startGasMonitoring()
-        loadGasValue()
 
-
-        // Lấy location
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        checkLocationPermission()
-
-        val boxTemp = findViewById<LinearLayout>(R.id.box_temp)
-        boxTemp.setOnClickListener {
-            if (isCelsius) {
-                // Đổi sang °F
-                val tempF = currentTempC * 9 / 5 + 32
-                tvTemp.text = "${tempF.toInt()}°F"
-                isCelsius = false
-            } else {
-                // Đổi về °C
-                tvTemp.text = "${currentTempC.toInt()}°C"
-                isCelsius = true
-            }
+        // Navigation icons
+        findViewById<ImageView>(R.id.icon_setting).setOnClickListener {
+            startActivity(Intent(this, Setting::class.java))
+        }
+        findViewById<ImageView>(R.id.icon_notifications).setOnClickListener {
+            startActivity(Intent(this, Notification::class.java))
+        }
+        findViewById<ImageView>(R.id.icon_stats).setOnClickListener {
+            startActivity(Intent(this, Stats::class.java))
         }
 
+        // WEATHER
+        checkLocationPermission()
+        setNextHourWeatherAlarm()
+
+        // GAS MONITORING
+        startGasAlarm()    // chạy nền từng phút
+        startGasAutoRefresh()  // realtime khi mở Dashboard
+
+        // Nút đổi °C/°F
+        findViewById<LinearLayout>(R.id.box_temp).setOnClickListener {
+            toggleTemperatureUnit()
+        }
     }
 
-    private val gasClient = OkHttpClient()
-
-//    private fun loadGasValue() {
-//        // 🔥 DỮ LIỆU MẪU – KHÔNG DÙNG API
-//        val gas = 55   // ví dụ 55%
-//
-//        runOnUiThread {
-//            val tvGas = findViewById<TextView>(R.id.tv_gas_value)
-//            tvGas.text = "$gas %"
-//        }
-//    }
-
+    // -------------------------------
+    // 🔥 REALTIME GAS UPDATE EVERY 10 SECONDS
+    // -------------------------------
+    private fun startGasAutoRefresh() {
+        val handler = android.os.Handler(mainLooper)
+        val runnable = object : Runnable {
+            override fun run() {
+                loadGasValue()
+                handler.postDelayed(this, 10_000)
+            }
+        }
+        handler.post(runnable)
+    }
 
     private fun loadGasValue() {
         Thread {
             try {
                 val request = Request.Builder()
-                    .url("https://YOUR_API_HERE")   // API gas thực tế của bạn
+                    .url("http://10.117.81.211:8000/node/node0")
                     .build()
 
                 val response = gasClient.newCall(request).execute()
                 val json = response.body?.string() ?: return@Thread
 
-                val arr = JSONArray(json)
-                val gas = arr.getJSONObject(0).getInt("gas")  // lấy giá trị mới nhất
+                val fixedJson = if (!json.trim().startsWith("[")) "[$json]" else json
+                val arr = JSONArray(fixedJson)
+
+                // 🔥 LẤY BẢN GHI MỚI NHẤT (INDEX 0)
+                val newest = arr.getJSONObject(0)
+
+                val gasValue = newest.getInt("gas")
+                val tempValue = newest.getDouble("temperature")
+                val humValue = newest.getDouble("humidity")
 
                 runOnUiThread {
-                    val tvGas = findViewById<TextView>(R.id.tv_gas_value)
-                    tvGas.text = "$gas %"
+                    tvGasValue.text = "$gasValue"
+
+                    // 🔥 HIỆN NHIỆT ĐỘ & ĐỘ ẨM TRONG NHÀ
+                    tvTempIndoor.text = "${tempValue.toInt()}°C"
+                    tvHumidityIndoor.text = "${humValue.toInt()}%"
                 }
 
             } catch (e: Exception) {
@@ -163,71 +154,58 @@ class Dashboard : ThemeLightDark() {
     }
 
 
-    private fun startGasMonitoring() {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (!alarmManager.canScheduleExactAlarms()) {
-                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-                startActivity(intent)
-                return   // ❗ DỪNG tại đây, chờ user cho phép
-            }
-        }
+
+    // -------------------------------
+    // 🔥 GAS ALARM mỗi phút
+    // -------------------------------
+    private fun startGasAlarm() {
+        val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(this, GasAlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            1,
-            intent,
+        val pi = PendingIntent.getBroadcast(
+            this, 1, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        alarmManager.setExactAndAllowWhileIdle(
+        am.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             System.currentTimeMillis(),
-            pendingIntent
+            pi
         )
     }
 
-
-
-
-
-
-    private fun setExactNextHourAlarm() {
+    // -------------------------------
+    // WEATHER
+    // -------------------------------
+    private fun setNextHourWeatherAlarm() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(this, WeatherAlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
+        val pi = PendingIntent.getBroadcast(
             this, 0, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val calendar = java.util.Calendar.getInstance()
-        calendar.timeInMillis = System.currentTimeMillis()
-
-        calendar.set(java.util.Calendar.MINUTE, 0)
-        calendar.set(java.util.Calendar.SECOND, 0)
-        calendar.set(java.util.Calendar.MILLISECOND, 0)
-
-        // Giờ tiếp theo
-        calendar.add(java.util.Calendar.HOUR_OF_DAY, 1)
+        val now = java.util.Calendar.getInstance()
+        now.set(java.util.Calendar.MINUTE, 0)
+        now.set(java.util.Calendar.SECOND, 0)
+        now.set(java.util.Calendar.MILLISECOND, 0)
+        now.add(java.util.Calendar.HOUR_OF_DAY, 1)
 
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            pendingIntent
+            now.timeInMillis,
+            pi
         )
     }
 
-
-
-
+    // -------------------------------
+    // WEATHER LOGIC
+    // -------------------------------
     private fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 this,
@@ -235,11 +213,9 @@ class Dashboard : ThemeLightDark() {
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ),
-                LOCATION_PERMISSION_REQUEST
+                1001
             )
-        } else {
-            getLastLocation()
-        }
+        } else getLastLocation()
     }
 
     override fun onRequestPermissionsResult(
@@ -249,108 +225,66 @@ class Dashboard : ThemeLightDark() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (requestCode == LOCATION_PERMISSION_REQUEST &&
+        if (requestCode == 1001 &&
             grantResults.isNotEmpty() &&
             grantResults[0] == PackageManager.PERMISSION_GRANTED
         ) {
             getLastLocation()
-        } else {
-            tvDesc.text = "Không có quyền truy cập vị trí"
         }
     }
+
 
     private fun getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
+        if (
             ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION
+                this, Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        }
+        ) return
 
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            location?.let {
-
-                // 🔥 LƯU VỊ TRÍ LẠI CHO WORKER DÙNG
-                val prefs = getSharedPreferences("Settings", MODE_PRIVATE)
-                prefs.edit()
-                    .putFloat("LAT", it.latitude.toFloat())
-                    .putFloat("LON", it.longitude.toFloat())
-                    .apply()
-
-                // 🔥 Gọi API hiển thị trên UI
-                getWeather(it.latitude, it.longitude)
-
-            } ?: run {
-                tvDesc.text = "Không lấy được vị trí"
-            }
+            location?.let { getWeather(it.latitude, it.longitude) }
         }
     }
 
-
     private fun getWeather(lat: Double, lon: Double) {
-        // Lấy ngôn ngữ đã lưu từ SharedPreferences
-        val prefs = getSharedPreferences("Settings", MODE_PRIVATE)
-        val languageCode = prefs.getString("My_Lang", "vi") ?: "vi"
+        val url =
+            "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$apiKey&units=metric&lang=vi"
 
-        // Tạo URL với tham số lang động
-        val url = "https://api.openweathermap.org/data/2.5/weather" +
-                "?lat=$lat&lon=$lon&appid=$apiKey&units=metric&lang=$languageCode"
+        val req = Request.Builder().url(url).build()
 
-        val request = Request.Builder().url(url).build()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: java.io.IOException) {
-                e.printStackTrace()
-            }
+        weatherClient.newCall(req).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {}
 
-            override fun onResponse(call: Call, response: Response) {
-                val json = response.body?.string()
-                val jsonObj = JSONObject(json)
-                val tempC = jsonObj.getJSONObject("main").getDouble("temp")
-                currentTempC = tempC
-                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
-                val desc = weather.getString("description")
-                val icon = weather.getString("icon")
-                val city = jsonObj.getString("name")
-                val humidity = jsonObj.getJSONObject("main").getInt("humidity")
-                val windSpeed = jsonObj.getJSONObject("wind").getDouble("speed") * 3.6
-                val windSpeedRounded = (Math.round(windSpeed * 100.0) / 100.0)
+            override fun onResponse(call: okhttp3.Call, resp: okhttp3.Response) {
+                val json = resp.body?.string() ?: return
+                val obj = JSONObject(json)
+
+                val temp = obj.getJSONObject("main").getDouble("temp")
+                val desc = obj.getJSONArray("weather").getJSONObject(0).getString("description")
+                val icon = obj.getJSONArray("weather").getJSONObject(0).getString("icon")
+                val city = obj.getString("name")
+
+                currentTempC = temp
 
                 runOnUiThread {
-                    tvTemp.text = "${tempC.toInt()}°C"
+                    tvTemp.text = "${temp.toInt()}°C"
                     tvDesc.text = city
-                    tvHumidity.text = "$humidity %"
-                    tvWindSpeed.text = "$windSpeedRounded km/h"
 
-                    val iconUrl = "https://openweathermap.org/img/wn/${icon}@2x.png"
-                    Glide.with(this@Dashboard).load(iconUrl).into(imgWeather)
-
-                    val tvWeatherDetail = findViewById<TextView>(R.id.tv_weather_detail)
-                    val iconWeatherDesc = findViewById<ImageView>(R.id.icon_weather_desc)
-                    tvWeatherDetail.text = desc.replaceFirstChar { it.uppercase() }
-                    val smallIconUrl = "https://openweathermap.org/img/wn/${icon}.png"
-                    Glide.with(this@Dashboard).load(smallIconUrl).into(iconWeatherDesc)
+                    Glide.with(this@Dashboard)
+                        .load("https://openweathermap.org/img/wn/${icon}@2x.png")
+                        .into(imgWeather)
                 }
             }
         })
     }
 
+    private fun toggleTemperatureUnit() {
+        isCelsius = !isCelsius
+        val displayed = if (isCelsius)
+            "${currentTempC.toInt()}°C"
+        else
+            "${(currentTempC * 9 / 5 + 32).toInt()}°F"
 
-
-//    private fun getWeatherIcon(icon: String): Int {
-//        return when (icon) {
-//            "01d" -> R.drawable.ic_sunny
-//            "01n" -> R.drawable.ic_moon
-//            "02d", "02n" -> R.drawable.ic_partly_cloudy
-//            "03d", "03n", "04d", "04n" -> R.drawable.ic_cloud
-//            "09d", "09n", "10d", "10n" -> R.drawable.ic_rain
-//            "11d", "11n" -> R.drawable.ic_thunder
-//            "13d", "13n" -> R.drawable.ic_snow
-//            "50d", "50n" -> R.drawable.ic_fog
-//            else -> R.drawable.ic_cloud
-//        }
-//    }
+        tvTemp.text = displayed
+    }
 }
-
