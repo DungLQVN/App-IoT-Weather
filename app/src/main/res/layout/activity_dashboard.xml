@@ -284,9 +284,9 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-
+                        android:src="@drawable/ic_indoor_temp"
                         android:layout_marginBottom="8dp" />
-                    <!--                android:src="@drawable/ic_light"-->
+
                     <TextView
                         android:id="@+id/tv_temp_indoor"
                         android:layout_width="wrap_content"
@@ -322,8 +322,9 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_marginBottom="8dp"/>
-        <!--                android:src="@drawable/ic_battery"-->
+                        android:layout_marginBottom="8dp"
+                        android:src="@drawable/ic_humidity"/>
+
 
 
                     <TextView
@@ -361,10 +362,9 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:src="@drawable/ic_gas"
+                        android:layout_marginBottom="8dp" />
 
-                        android:layout_marginBottom="8dp"
-                        app:tint="@android:color/white" />
-                    <!--                android:src="@drawable/ic_noise"-->
 
                     <TextView
                         android:id="@+id/tv_gas_value"
@@ -395,57 +395,114 @@
                 android:layout_marginTop="16dp"
                 android:background="#3D3D3D" />  <!-- Màu xám đậm nhẹ -->
 
-<!--            &lt;!&ndash; Tiêu đề "Thiết bị" &ndash;&gt;-->
-<!--            <TextView-->
-<!--                android:id="@+id/device_title"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_below="@id/divider_line"-->
-<!--                android:layout_marginStart="16dp"-->
-<!--                android:layout_marginTop="16dp"-->
-<!--                android:text="Thiết bị"-->
-<!--                android:textSize="18sp"-->
-<!--                android:textStyle="bold"-->
-<!--                android:textColor="@android:color/white" />-->
+            <!-- Tiêu đề -->
+            <TextView
+                android:id="@+id/device_title2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divider_line"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Thiết bị"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/textColor" />
 
-<!--            &lt;!&ndash; Hai ô vuông chứa thiết bị &ndash;&gt;-->
-<!--            <LinearLayout-->
-<!--                android:id="@+id/device_container"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_below="@id/device_title"-->
-<!--                android:layout_margin="16dp"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:gravity="center"-->
-<!--                android:weightSum="2">-->
+            <!-- Hai ô thiết bị -->
+            <LinearLayout
+                android:id="@+id/device_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/device_title"
+                android:layout_margin="16dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:weightSum="2">
 
-<!--                &lt;!&ndash; Ô Thiết bị 1 &ndash;&gt;-->
-<!--                <LinearLayout-->
-<!--                    android:id="@+id/device1_box"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="150dp"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:orientation="vertical"-->
-<!--                    android:gravity="center"-->
-<!--                    android:layout_marginEnd="8dp"-->
-<!--                    android:background="@drawable/navibar_background">-->
+                <!-- Ô Quạt 1 -->
+                <LinearLayout
+                    android:id="@+id/fan1_box"
+                    android:layout_width="0dp"
+                    android:layout_height="160dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/navibar_background">
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/device1_name"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="Thiết bị 1"-->
-<!--                        android:textColor="@color/textColor"-->
-<!--                        android:textSize="16sp"-->
-<!--                        android:textStyle="bold"-->
-<!--                        android:layout_marginBottom="8dp"/>-->
+                    <ImageView
+                        android:id="@+id/fan1_icon"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_fan"
 
-<!--                    <Switch-->
-<!--                        android:id="@+id/device1_switch"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text=""/>-->
-<!--                </LinearLayout>-->
+                        android:layout_marginBottom="6dp"/>
+
+                    <TextView
+                        android:id="@+id/fan1_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Quạt 1"
+                        android:textColor="@color/textColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="6dp"/>
+
+                    <TextView
+                        android:id="@+id/fan1_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OFF"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="6dp"
+                        android:background="@drawable/state_background"/>
+                </LinearLayout>
+
+                <!-- Ô Quạt 2 -->
+                <LinearLayout
+                    android:id="@+id/fan2_box"
+                    android:layout_width="0dp"
+                    android:layout_height="160dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/navibar_background">
+
+                    <ImageView
+                        android:id="@+id/fan2_icon"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_fan"
+                        android:layout_marginBottom="6dp"/>
+
+                    <TextView
+                        android:id="@+id/fan2_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Quạt 2"
+                        android:textColor="@color/textColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="6dp"/>
+
+                    <TextView
+                        android:id="@+id/fan2_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OFF"
+                        android:textSize="15sp"
+                        android:textColor="@android:color/white"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="6dp"
+                        android:background="@drawable/state_background"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
 
 <!--                &lt;!&ndash; Ô Thiết bị 2 &ndash;&gt;-->
 <!--                <LinearLayout-->

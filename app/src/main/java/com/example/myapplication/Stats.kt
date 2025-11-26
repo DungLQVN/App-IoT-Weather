@@ -11,20 +11,26 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
+import android.graphics.Color
 
 class Stats : ThemeLightDark() {
 
     private val client = OkHttpClient()
 
-    // 🔥 Auto refresh handler
-    private val refreshHandler = Handler(Looper.getMainLooper())
-    private lateinit var refreshRunnable: Runnable
+    // Lịch sử 60 điểm
+    private val gasHistory = ArrayDeque<Int>()
+    private val tempHistory = ArrayDeque<Int>()
+    private val humHistory = ArrayDeque<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +43,7 @@ class Stats : ThemeLightDark() {
             insets
         }
 
+        // Navigation
         findViewById<ImageView>(R.id.icon_setting).setOnClickListener {
             startActivity(Intent(this, Setting::class.java))
         }
@@ -47,88 +54,127 @@ class Stats : ThemeLightDark() {
             startActivity(Intent(this, Dashboard::class.java))
         }
 
-        // 🔥 Lần đầu load chart
-        loadGasChart()
+        // Bắt đầu cập nhật dữ liệu mỗi 5 giây
+       startLiveAPI()
+//        startChartUpdater()
 
-        // 🔥 Tự động refresh mỗi 3 giây
-        refreshRunnable = Runnable {
-            loadGasChart()
-            refreshHandler.postDelayed(refreshRunnable, 3000)
-        }
-        refreshHandler.postDelayed(refreshRunnable, 3000)
     }
+// test du lieu thong bao
+    private fun startChartUpdater() {
+        SensorDataProvider.start()
 
-    override fun onDestroy() {
-        super.onDestroy()
-        refreshHandler.removeCallbacks(refreshRunnable)
-    }
+        val handler = Handler(Looper.getMainLooper())
 
-    private fun loadGasChart() {
-        Thread {
-            try {
-                val req = Request.Builder()
-                    .url("http://10.117.81.211:8000/node/node0")
-                    .build()
-
-                val res = client.newCall(req).execute()
-                val json = res.body?.string() ?: return@Thread
-
-                val arr = JSONArray(json)
-                val gas = arr.getJSONObject(0).getInt("gas")
+        val runnable = object : Runnable {
+            override fun run() {
+                val gas = SensorDataProvider.gas
                 val air = 100 - gas
 
+                val gasList = SensorDataProvider.gasHistory.toList()
+                val tempList = SensorDataProvider.tempHistory.toList()
+                val humList = SensorDataProvider.humHistory.toList()
+
                 runOnUiThread {
-                    showPieChart(gas, air)
+                    showLineChart(findViewById(R.id.chart_gas), gasList, "Gas", Color.RED)
+                    showLineChart(findViewById(R.id.chart_temp), tempList, "Temp", Color.CYAN)
+                    showLineChart(findViewById(R.id.chart_hum), humList, "Hum", Color.GREEN)
                 }
 
-            } catch (e: Exception) {
-                e.printStackTrace()
+                handler.postDelayed(this, 1000)
             }
-        }.start()
+        }
+
+        handler.post(runnable)
     }
 
-    private fun showPieChart(gas: Int, air: Int) {
-        val pieChart = findViewById<PieChart>(R.id.pieChart)
-        val tvSub = findViewById<TextView>(R.id.tv_sub)
 
-        val entries = arrayListOf(
-            PieEntry(gas.toFloat(), "Gas"),
-            PieEntry(air.toFloat(), "Không khí")
-        )
+    // -------------------------------------------
+    //  GỌI API MỖI 5 GIÂY – LƯU 60 ĐIỂM
+    // -------------------------------------------
+    private fun startLiveAPI() {
+        val handler = Handler(Looper.getMainLooper())
 
-        val dataSet = PieDataSet(entries, "")
-        dataSet.colors = listOf(
-            android.graphics.Color.parseColor("#FF3B30"), // Gas
-            android.graphics.Color.parseColor("#4CD964")  // Không khí
-        )
+        val runnable = object : Runnable {
+            override fun run() {
+                Thread {
+                    try {
+                        val req = Request.Builder()
+                            .url("http://10.117.81.211:8000/node/node0")
+                            .build()
 
-        val labelColor = ContextCompat.getColor(this, R.color.textColor)
-        dataSet.valueTextSize = 14f
-        dataSet.valueTextColor = labelColor
+                        val res = client.newCall(req).execute()
+                        val json = res.body?.string() ?: return@Thread
 
-        val data = PieData(dataSet)
-        pieChart.data = data
+                        val arr = JSONArray(json)
+                        val obj = arr.getJSONObject(0)
 
-        // Không cho xoay
-        pieChart.isRotationEnabled = false
-        pieChart.isHighlightPerTapEnabled = false
+                        val gas = obj.getInt("gas")
+                        val temp = obj.getDouble("temperature").toInt()
+                        val hum = obj.getDouble("humidity").toInt()
 
-        pieChart.setUsePercentValues(true)
-        pieChart.setDrawEntryLabels(false)
+                        // Lưu vào lịch sử
+                        addHistoryValue(gasHistory, gas)
+                        addHistoryValue(tempHistory, temp)
+                        addHistoryValue(humHistory, hum)
 
-        // Donut style
-        pieChart.isDrawHoleEnabled = true
-        pieChart.holeRadius = 60f
-        pieChart.transparentCircleRadius = 65f
+                        runOnUiThread {
+                            updateAllCharts()
+                        }
 
-        // Animation
-        pieChart.animateY(1000)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }.start()
 
-        pieChart.description.isEnabled = false
+                handler.postDelayed(this, 5000) // ⏰ 5 GIÂY / lần
+            }
+        }
 
-        tvSub.text = "Cập nhật: Gas $gas%"
-        tvSub.setTextColor(labelColor)
+        handler.post(runnable)
+    }
 
-        pieChart.invalidate()
+    // -------------------------------------------
+    //  THÊM GIÁ TRỊ VÀO LỊCH SỬ (tối đa 60 điểm)
+    // -------------------------------------------
+    private fun addHistoryValue(list: ArrayDeque<Int>, value: Int) {
+        if (list.size >= 60) list.removeFirst()
+        list.addLast(value)
+    }
+
+    // -------------------------------------------
+    //  CẬP NHẬT TẤT CẢ LINE CHART
+    // -------------------------------------------
+    private fun updateAllCharts() {
+        showLineChart(findViewById(R.id.chart_gas), gasHistory.toList(), "Gas", Color.RED)
+        showLineChart(findViewById(R.id.chart_temp), tempHistory.toList(), "Temp", Color.CYAN)
+        showLineChart(findViewById(R.id.chart_hum), humHistory.toList(), "Humidity", Color.GREEN)
+    }
+
+
+    // -------------------------------------------
+    // Line Chart
+    // -------------------------------------------
+    private fun showLineChart(chart: LineChart, values: List<Int>, label: String, color: Int) {
+        val entries = ArrayList<Entry>()
+
+        for (i in values.indices) {
+            entries.add(Entry(i.toFloat(), values[i].toFloat()))
+        }
+
+        val dataSet = LineDataSet(entries, label)
+        dataSet.color = color
+        dataSet.valueTextColor = color
+        dataSet.circleRadius = 3f
+        dataSet.setCircleColor(color)
+        dataSet.lineWidth = 2f
+        dataSet.setDrawFilled(false)
+
+        chart.data = LineData(dataSet)
+        chart.description.isEnabled = false
+        chart.setTouchEnabled(true)
+        chart.isDragEnabled = true
+        chart.setScaleEnabled(true)
+
+        chart.invalidate()
     }
 }

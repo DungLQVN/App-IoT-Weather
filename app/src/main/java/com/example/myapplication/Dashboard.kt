@@ -42,6 +42,10 @@ class Dashboard : ThemeLightDark() {
     private lateinit var tvGasValue: TextView
     private lateinit var tvTempIndoor: TextView
     private lateinit var tvHumidityIndoor: TextView
+    private lateinit var tvWeatherDetail: TextView
+    private lateinit var fan1State: TextView
+    private lateinit var fan2State: TextView
+
 
 
     private var currentTempC = 0.0
@@ -78,6 +82,10 @@ class Dashboard : ThemeLightDark() {
         tvGasValue = findViewById(R.id.tv_gas_value)
         tvTempIndoor = findViewById(R.id.tv_temp_indoor)
         tvHumidityIndoor = findViewById(R.id.tv_humidity_indoor)
+        tvWeatherDetail = findViewById(R.id.tv_weather_detail)
+        fan1State = findViewById(R.id.fan1_state)
+        fan2State = findViewById(R.id.fan2_state)
+
 
 
         // Navigation icons
@@ -105,6 +113,16 @@ class Dashboard : ThemeLightDark() {
         }
     }
 
+    private fun setFanState(view: TextView, isOn: Boolean) {
+        if (isOn) {
+            view.text = "ON"
+            view.setBackgroundColor(android.graphics.Color.parseColor("#4CD964")) // xanh
+        } else {
+            view.text = "OFF"
+            view.setBackgroundColor(android.graphics.Color.parseColor("#FF3B30")) // đỏ
+        }
+    }
+
     // -------------------------------
     // 🔥 REALTIME GAS UPDATE EVERY 1 SECONDS
     // -------------------------------
@@ -119,6 +137,50 @@ class Dashboard : ThemeLightDark() {
         handler.post(runnable)
     }
 
+    // test
+//    private fun startGasAutoRefresh() {
+//        SensorDataProvider.start()
+//
+//        val handler = android.os.Handler(mainLooper)
+//
+//        val runnable = object : Runnable {
+//            override fun run() {
+//
+//                val gasValue = SensorDataProvider.gas
+//                val tempValue = SensorDataProvider.temp
+//                val humValue = SensorDataProvider.hum
+//
+//                var fan1 = 0
+//                var fan2 = 0
+//
+//                // RULE
+//                if (gasValue >= 70) {
+//                    fan1 = 1
+//                    fan2 = 1
+//                } else if (tempValue < 25) {
+//                    fan1 = 0
+//                    fan2 = 0
+//                } else if (humValue > 80) {
+//                    fan1 = 1
+//                    fan2 = 1
+//                }
+//
+//                runOnUiThread {
+//                    tvGasValue.text = gasValue.toString()
+//                    tvTempIndoor.text = "${tempValue}°C"
+//                    tvHumidityIndoor.text = "${humValue}%"
+//
+//                    setFanState(fan1State, fan1 == 1)
+//                    setFanState(fan2State, fan2 == 1)
+//                }
+//
+//                handler.postDelayed(this, 1000)
+//            }
+//        }
+//
+//        handler.post(runnable)
+//    }
+
 
     private fun loadGasValue() {
         Thread {
@@ -130,22 +192,47 @@ class Dashboard : ThemeLightDark() {
                 val response = gasClient.newCall(request).execute()
                 val json = response.body?.string() ?: return@Thread
 
-                val fixedJson = if (!json.trim().startsWith("[")) "[$json]" else json
-                val arr = JSONArray(fixedJson)
-
-                // 🔥 LẤY BẢN GHI MỚI NHẤT (INDEX 0)
+                val arr = JSONArray(json)
                 val newest = arr.getJSONObject(0)
 
                 val gasValue = newest.getInt("gas")
                 val tempValue = newest.getDouble("temperature")
                 val humValue = newest.getDouble("humidity")
 
-                runOnUiThread {
-                    tvGasValue.text = "$gasValue"
+                // Giá trị quạt đọc từ API
+                var fan1 = newest.getInt("Fan1")
+                var fan2 = newest.getInt("Fan2")
 
-                    // 🔥 HIỆN NHIỆT ĐỘ & ĐỘ ẨM TRONG NHÀ
+                // ======================================================
+                // 🔥 RULE ƯU TIÊN (GAS > TEMP < HUMIDITY)
+                // ======================================================
+
+                if (gasValue >= 70) {
+                    // ❗ƯU TIÊN CAO NHẤT: GAS cao → bật quạt
+                    fan1 = 1
+                    fan2 = 1
+
+                } else if (tempValue < 25) {
+                    // Nhiệt độ thấp → tắt quạt
+                    fan1 = 0
+                    fan2 = 0
+
+                } else if (humValue > 80) {
+                    // Độ ẩm quá cao → bật quạt
+                    fan1 = 1
+                    fan2 = 1
+                }
+
+                runOnUiThread {
+
+                    // Gas – nhiệt – độ ẩm
+                    tvGasValue.text = "$gasValue"
                     tvTempIndoor.text = "${tempValue.toInt()}°C"
                     tvHumidityIndoor.text = "${humValue.toInt()}%"
+
+                    // 🔥 Cập nhật trạng thái quạt sau khi áp rule
+                    setFanState(fan1State, fan1 == 1)
+                    setFanState(fan2State, fan2 == 1)
                 }
 
             } catch (e: Exception) {
@@ -259,7 +346,8 @@ class Dashboard : ThemeLightDark() {
             override fun onResponse(call: okhttp3.Call, resp: okhttp3.Response) {
                 val json = resp.body?.string() ?: return
                 val obj = JSONObject(json)
-
+                val humidity = obj.getJSONObject("main").getInt("humidity")
+                val wind = obj.getJSONObject("wind").getDouble("speed")
                 val temp = obj.getJSONObject("main").getDouble("temp")
                 val desc = obj.getJSONArray("weather").getJSONObject(0).getString("description")
                 val icon = obj.getJSONArray("weather").getJSONObject(0).getString("icon")
@@ -270,6 +358,9 @@ class Dashboard : ThemeLightDark() {
                 runOnUiThread {
                     tvTemp.text = "${temp.toInt()}°C"
                     tvDesc.text = city
+                    tvWeatherDetail.text = desc
+                    tvHumidity.text = "$humidity%"      // 🔥 độ ẩm ngoài trời
+                    tvWindSpeed.text = "$wind m/s"      // 🔥 tốc độ gió
 
                     Glide.with(this@Dashboard)
                         .load("https://openweathermap.org/img/wn/${icon}@2x.png")

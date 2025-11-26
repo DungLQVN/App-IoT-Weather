@@ -13,7 +13,6 @@ class GasWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
 
     private val client = OkHttpClient()
-
     private val gasApiUrl = "http://10.117.81.211:8000/node/node0"
 
     override fun doWork(): Result {
@@ -44,29 +43,32 @@ class GasWorker(context: Context, workerParams: WorkerParameters) :
 
                 Log.d("GasWorker", "Gas=$gasValue Temp=$tempValue Hum=$humValue")
 
-                // ----------- CÁC NGƯỠNG CẢNH BÁO -----------
+                // ====================== CẢNH BÁO GAS ======================
+                // GAS
                 if (gasValue > 70) {
-                    NotificationHelper.showNotification(
-                        applicationContext,
-                        "⚠️ Cảnh Báo Gas",
-                        "Nồng độ gas cao: $gasValue%"
-                    )
+                    val msg = "⚠️ Gas cao: $gasValue%"
+                    NotificationHelper.showNotification(applicationContext, "⚠️ Cảnh Báo Gas", msg)
+                    NotificationStorage.saveNotification(applicationContext, msg)
+
+                    AlertScheduler.startRepeatingAlert(applicationContext)
                 }
 
+// TEMP
                 if (tempValue > 40) {
-                    NotificationHelper.showNotification(
-                        applicationContext,
-                        "⚠️ Cảnh Báo Nhiệt Độ",
-                        "Nhiệt độ phòng quá cao: $tempValue°C"
-                    )
+                    val msg = "⚠️ Nhiệt độ cao: $tempValue°C"
+                    NotificationHelper.showNotification(applicationContext, "⚠️ Nhiệt Độ Cao", msg)
+                    NotificationStorage.saveNotification(applicationContext, msg)
+
+                    AlertScheduler.startRepeatingAlert(applicationContext)
                 }
 
+// HUMIDITY
                 if (humValue > 80) {
-                    NotificationHelper.showNotification(
-                        applicationContext,
-                        "⚠️ Cảnh Báo Độ Ẩm",
-                        "Độ ẩm quá cao: $humValue%"
-                    )
+                    val msg = "⚠️ Độ ẩm cao: $humValue%"
+                    NotificationHelper.showNotification(applicationContext, "⚠️ Độ Ẩm Cao", msg)
+                    NotificationStorage.saveNotification(applicationContext, msg)
+
+                    AlertScheduler.startRepeatingAlert(applicationContext)
                 }
 
                 return Result.success()
@@ -74,23 +76,19 @@ class GasWorker(context: Context, workerParams: WorkerParameters) :
         } catch (e: IOException) {
             Log.e("GasWorker", "Network error", e)
             return Result.retry()
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Log.e("GasWorker", "Unexpected error", e)
             return Result.failure()
         }
     }
 
-    // ---------------------------------------------------------
-    // Parse JSON → trả về bản ghi mới nhất chứa temp, hum, gas
-    // ---------------------------------------------------------
+    // Parse JSON trả về bản ghi mới nhất
     private fun parseNewest(text: String): SensorData? {
         return try {
             val arr = JSONArray(text)
             if (arr.length() == 0) return null
 
             val newest = arr.getJSONObject(0)
-
             SensorData(
                 gas = newest.getInt("gas"),
                 temp = newest.getDouble("temperature").toInt(),
@@ -108,3 +106,56 @@ class GasWorker(context: Context, workerParams: WorkerParameters) :
         val hum: Int
     )
 }
+
+
+// test
+//package com.example.myapplication
+//
+//import android.content.Context
+//import android.util.Log
+//import androidx.work.Worker
+//import androidx.work.WorkerParameters
+//import kotlin.random.Random
+//
+//class GasWorker(context: Context, workerParams: WorkerParameters) :
+//    Worker(context, workerParams) {
+//
+//    // 30 giây
+//    private val ALERT_INTERVAL = 30_000L
+//
+//    override fun doWork(): Result {
+//
+//        SensorDataProvider.start()
+//
+//        val gas = SensorDataProvider.gas
+//        val temp = SensorDataProvider.temp
+//        val hum = SensorDataProvider.hum
+//
+//        if (gas > 70) {
+//            NotificationHelper.showNotification(
+//                applicationContext,
+//                "⚠️ Gas cao",
+//                "Gas hiện tại: $gas%"
+//            )
+//        }
+//
+//        if (temp > 40) {
+//            NotificationHelper.showNotification(
+//                applicationContext,
+//                "⚠️ Nhiệt độ cao",
+//                "Nhiệt độ: $temp°C"
+//            )
+//        }
+//
+//        if (hum > 80) {
+//            NotificationHelper.showNotification(
+//                applicationContext,
+//                "⚠️ Độ ẩm cao",
+//                "Độ ẩm: $hum%"
+//            )
+//        }
+//
+//        return Result.success()
+//    }
+//
+//}

@@ -10,40 +10,81 @@
     tools:context=".Stats">
 
     <!-- TIÊU ĐỀ -->
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tỉ lệ Gas trong nhà"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:textColor="@color/textColor"
-        android:layout_marginTop="24dp"
-        android:layout_centerHorizontal="true"/>
-
-    <!-- BIỂU ĐỒ DONUT -->
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/pieChart"
+    <RelativeLayout
+        android:id="@+id/header_container"
         android:layout_width="match_parent"
-        android:layout_height="360dp"
-        android:layout_below="@id/tv_title"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_height="70dp"
+        android:background="@color/layer1"
+        android:padding="16dp"
+        android:layout_alignParentTop="true">
 
-    <!-- TÍNH TRẠNG -->
-    <TextView
-        android:id="@+id/tv_sub"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cập nhật: --"
-        android:textColor="@color/textColor"
-        android:layout_below="@id/pieChart"
-        android:layout_marginTop="12dp"
-        android:layout_centerHorizontal="true" />
-
+        <TextView
+            android:id="@+id/header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stat"
+            android:textColor="@color/textColor"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
 
 
+    <!-- ⭐ SCROLLVIEW CHỨA TẤT CẢ BIỂU ĐỒ -->
+    <ScrollView
+        android:id="@+id/scroll_area"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header_container"
+        android:layout_above="@id/bottom_nav"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- PIE CHART -->
+<!--            <com.github.mikephil.charting.charts.PieChart-->
+<!--                android:id="@+id/pieChart"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="360dp"-->
+<!--                android:layout_marginBottom="20dp"/>-->
+
+<!--            &lt;!&ndash; SUBTEXT &ndash;&gt;-->
+<!--            <TextView-->
+<!--                android:id="@+id/tv_sub"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Cập nhật: &#45;&#45;"-->
+<!--                android:textColor="@color/textColor"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:layout_marginBottom="20dp" />-->
+
+            <!-- ⭐ LINE CHART GAS -->
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart_gas"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- ⭐ LINE CHART NHIỆT ĐỘ -->
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart_temp"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- ⭐ LINE CHART ĐỘ ẨM -->
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart_hum"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginBottom="24dp"/>
+
+        </LinearLayout>
+    </ScrollView>
     <!-- BOTTOM NAVIGATION -->
     <LinearLayout
         android:id="@+id/bottom_nav"

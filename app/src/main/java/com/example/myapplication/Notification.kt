@@ -46,6 +46,16 @@ class Notification : ThemeLightDark() {
 
         val jsonArray = NotificationStorage.getNotifications(this)
 
+        // >>>>>>>>>>>>> THÊM NÚT XÓA <<<<<<<<<<<<<<
+        val btnClear = findViewById<TextView>(R.id.btn_clear_all)
+
+        btnClear.setOnClickListener {
+            NotificationStorage.clearAll(this)
+            finish()
+            startActivity(intent)
+        }
+
+
 // Duyệt từ mới nhất → cũ nhất
         for (i in jsonArray.length() - 1 downTo 0) {
 
@@ -72,4 +82,6 @@ class Notification : ThemeLightDark() {
 
 
     }
+
+
 }

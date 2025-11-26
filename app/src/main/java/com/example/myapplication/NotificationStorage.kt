@@ -26,4 +26,9 @@ object NotificationStorage {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         return JSONArray(prefs.getString(KEY_LIST, "[]"))
     }
+
+    fun clearAll(context: Context) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putString(KEY_LIST, "[]").apply()
+    }
 }
