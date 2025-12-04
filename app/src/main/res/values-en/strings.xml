@@ -14,4 +14,7 @@
     <string name="gas">Gas</string>
     <string name="device">Device</string>
     <string name="theme">Theme</string>
+    <string name="home">Home</string>
+    <string name="fan1">Fan 1</string>
+    <string name="fan2">Fan 2</string>
 </resources>
